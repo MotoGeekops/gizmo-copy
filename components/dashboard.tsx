@@ -172,7 +172,7 @@ export default function Dashboard({ a }: { a: AppActions }) {
             className={`desk-card ${revealed ? "is-revealed" : ""}`}
             style={
               {
-                "--subject-ink": subject?.color || "#6756c9",
+                "--subject-ink": subject?.color || "#406d91",
               } as React.CSSProperties
             }
           >
@@ -236,12 +236,12 @@ export default function Dashboard({ a }: { a: AppActions }) {
       )}
       <section className="learning-totals" aria-label="Learning overview">
         {[
-          [Layers, "Due for review", stats.due],
-          [BookOpen, "In progress", stats.learning],
-          [Check, "Mastered", stats.mastered],
-          [Sparkles, "Total XP", stats.xp.toLocaleString()],
-        ].map(([Icon, label, value]: any) => (
-          <div key={label}>
+          [Layers, "Due for review", stats.due, "coral"],
+          [BookOpen, "In progress", stats.learning, "blue"],
+          [Check, "Mastered", stats.mastered, "teal"],
+          [Sparkles, "Total XP", stats.xp.toLocaleString(), "amber"],
+        ].map(([Icon, label, value, tone]: any) => (
+          <div key={label} className={`total-${tone}`}>
             <span className="total-label">
               <Icon size={16} />
               {label}

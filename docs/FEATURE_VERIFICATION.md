@@ -37,6 +37,8 @@ The browser check covered the dashboard card reveal, library and card-editor nav
 
 Screenshots are saved locally under `outputs/RecallForge-Redesign.jpg`, `outputs/RecallForge-Redesign-Mobile.jpg`, and `outputs/RecallForge-Redesign-Dark.jpg`. They show local acceptance data, not a deployed account. The final TypeScript check passed; source packaging runs a fresh production build after this redesign. The backend and Rust implementation did not change during this visual pass.
 
+The subsequent palette refinement uses navy, teal, blue, coral, and amber with cool neutral surfaces. It was checked on the desktop dashboard, study-mode page, dark dashboard, and 390 × 844 phone dashboard. The phone document had no horizontal overflow. Shared text and button color pairs were checked for contrast, including muted text on the amber target panel. The original saved deck colors were retained. Local screenshots are `outputs/RecallForge-Palette.jpg`, `outputs/RecallForge-Palette-Dark.jpg`, and `outputs/RecallForge-Palette-Mobile.jpg`.
+
 ## Partial or deferred
 
 - Onboarding is an inline first-run path with optional starters, subject/deck creation, and editable goals; no multi-step onboarding wizard.

@@ -2,7 +2,7 @@ export const samples = [
   {
     name: "Filipino vocabulary",
     subject: "Filipino",
-    color: "#7765ed",
+    color: "#406d91",
     description: "Everyday words, lasting understanding.",
     cards: [
       ["What does “malasakit” mean in English?", "Care or concern for others"],
@@ -15,7 +15,7 @@ export const samples = [
   {
     name: "The language of life",
     subject: "Science",
-    color: "#34a59a",
+    color: "#22776d",
     description: "A small introduction to biology.",
     cards: [
       ["What is the basic unit of life?", "Cell"],
@@ -31,7 +31,7 @@ export const samples = [
   {
     name: "Math essentials",
     subject: "Mathematics",
-    color: "#e1a23e",
+    color: "#91601b",
     description: "Build confidence, one equation at a time.",
     cards: [
       ["What is 15% of 200?", "30"],
@@ -44,7 +44,7 @@ export const samples = [
   {
     name: "Words worth knowing",
     subject: "English",
-    color: "#e37f9a",
+    color: "#a4513e",
     description: "A little vocabulary goes a long way.",
     cards: [
       ["What does “concise” mean?", "Brief and clear"],
@@ -57,7 +57,7 @@ export const samples = [
   {
     name: "Philippine history basics",
     subject: "History",
-    color: "#5b9de0",
+    color: "#677b51",
     description: "An optional starter set of historical facts.",
     cards: [
       ["Who wrote Noli Me Tangere?", "José Rizal"],
@@ -79,7 +79,7 @@ export const samples = [
   {
     name: "Read between the lines",
     subject: "Reading",
-    color: "#ab82cf",
+    color: "#786382",
     description: "Practice the building blocks of comprehension.",
     cards: [
       ["What is the main idea of a passage?", "Its central point"],

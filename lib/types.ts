@@ -147,12 +147,12 @@ export type AppData = {
   engine: string;
 };
 export const colors = [
-  "#7765ed",
-  "#34a59a",
-  "#e1a23e",
-  "#e37f9a",
-  "#5b9de0",
-  "#ab82cf",
+  "#406d91",
+  "#22776d",
+  "#91601b",
+  "#a4513e",
+  "#677b51",
+  "#786382",
 ];
 export function uid() {
   return crypto.randomUUID();
