@@ -762,7 +762,7 @@ export function Settings({ a }: { a: AppActions }) {
     try {
       await api("settings", { data: draft, version: a.data.settingsVersion });
       await a.reload();
-      a.toast("Your study space, just the way you like it.");
+      a.toast("Preferences saved.");
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -1049,10 +1049,10 @@ export function Settings({ a }: { a: AppActions }) {
               {error}
             </p>
           )}
-          <div className="settings-save">
+          <div className={`settings-save${dirty ? " has-changes" : ""}`}>
             <span>
               {dirty
-                ? "A few personal touches are ready to save."
+                ? "Unsaved changes"
                 : "Your preferences are up to date."}
             </span>
             <Button busy={busy} disabled={!dirty} onClick={save}>

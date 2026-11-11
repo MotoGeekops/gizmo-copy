@@ -34,3 +34,11 @@ This redesign changes presentation and copy. Rust evaluation, scheduling, databa
 ## Palette refinement
 
 The user asked for a clean palette with more than one color. The earlier violet treatment covered most surfaces and secondary details, leaving the other palette colors almost invisible. The revised palette keeps the existing layout and typography. The index-card stack uses mint and peach backing sheets, the daily target has an amber surface, and the four learning totals use labeled accents. Navigation and form borders return to cool neutrals. Charts, study modes, and earned achievements use the same color roles throughout. Saved subject and deck colors are preserved; the picker and new starter decks offer coordinated choices.
+
+## Readability and interaction refinement
+
+The next pass applies the installed UI/UX guidance to the existing interface. It keeps the palette, typefaces, layout concept, and working study behavior. Searches were limited to readable text, touch targets, and React form semantics; this is a focused refinement of an existing app.
+
+Use a shared rem-based type scale: 13 px captions, 14 px labels, 16 px reading and control text, and 18 px section headings at the default browser text size. Essential labels reflow rather than shrink on narrow screens. Desktop and phone layouts use the same scale. Use 44 px control targets, 48 px primary phone actions, a small 4/8 px spacing scale, comfortable form groups, and consistent focus and pressed feedback. Compact switches and color swatches retain small visual marks inside larger controls. Keep fixed mobile controls clear of safe areas and leave scroll clearance beneath them.
+
+Review the dashboard, library, card editor, study, and settings on desktop and phone. Check the remaining pages for wrapping and hierarchy, include a narrow landscape size, verify dark colors independently, and retain reduced-motion behavior. These checks are scoped browser verification rather than a claim of a complete accessibility audit.

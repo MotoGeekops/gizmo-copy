@@ -107,16 +107,19 @@ function ColorPicker({
     <div className="field">
       <span>Color</span>
       <div className="color-picker">
-        {colors.map((c) => (
+        {colors.map((c, index) => (
           <button
             type="button"
             key={c}
-            aria-label={`Choose color ${c}`}
+            aria-label={`Choose ${["slate blue", "teal", "amber", "coral", "sage", "plum"][index]} color`}
+            title={["Slate blue", "Teal", "Amber", "Coral", "Sage", "Plum"][index]}
             aria-pressed={c === color}
             onClick={() => setColor(c)}
-            style={{ background: c }}
+            style={{ "--swatch-color": c } as React.CSSProperties}
           >
-            {c === color && <Check size={18} />}
+            <span className="color-swatch">
+              {c === color && <Check size={18} aria-hidden="true" />}
+            </span>
           </button>
         ))}
       </div>

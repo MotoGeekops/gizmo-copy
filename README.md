@@ -4,7 +4,7 @@
 
 RecallForge is a private personal study application with a React/Vinext interface, a real Rust WebAssembly study engine, Cloudflare D1 persistence, and R2 images. It targets ChatGPT Sites hosting.
 
-This version provides a working online study workflow. It is saved for review and has not been deployed; publication requires the approval requested in the build brief. The [feature report](docs/FEATURE_VERIFICATION.md) distinguishes verified, partial, and deferred capabilities.
+This version provides a working online study workflow. Updates are prepared for review; publication requires the approval requested in the build brief. The [feature report](docs/FEATURE_VERIFICATION.md) distinguishes verified, partial, and deferred capabilities.
 
 ## Start locally
 

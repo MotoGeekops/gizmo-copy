@@ -39,6 +39,16 @@ Screenshots are saved locally under `outputs/RecallForge-Redesign.jpg`, `outputs
 
 The subsequent palette refinement uses navy, teal, blue, coral, and amber with cool neutral surfaces. It was checked on the desktop dashboard, study-mode page, dark dashboard, and 390 × 844 phone dashboard. The phone document had no horizontal overflow. Shared text and button color pairs were checked for contrast, including muted text on the amber target panel. The original saved deck colors were retained. Local screenshots are `outputs/RecallForge-Palette.jpg`, `outputs/RecallForge-Palette-Dark.jpg`, and `outputs/RecallForge-Palette-Mobile.jpg`.
 
+## Readability and interaction verification
+
+The UI/UX refinement keeps the palette and introduces shared rem-based text sizes, 16 px reading and input text, larger captions, consistent control sizing, and clearer section spacing. Browser review also identified and fixed corner-aligned dialogs, a clipped sort selection, cramped mobile form columns, and an unnecessary sticky save bar. The save bar becomes sticky only while preferences have unsaved changes; successful saves now show "Preferences saved."
+
+Browser checks covered the library, study, exams, statistics, achievements, settings, and tutor, plus the interactive dashboard and card editor. Twelve recorded layout measurements had no document-level horizontal overflow at desktop, narrow phone, and landscape sizes. The phone configuration was 375 × 812 and the landscape configuration was 812 × 375. The native dialog and its content also fit the tested narrow viewport.
+
+Measured switches and color controls were 44 × 44 CSS px. The study answer input used 16 px text and exceeded the 44 px control height. Color selection and Escape dismissal, centered dialogs, full mobile card-format labels, session resume/pause, card reveal, preference saves, and keyboard access through the skip link were exercised. A focused mobile switch remained clear of the dirty save bar. Dark colors were reviewed independently; enabling reduced motion produced a computed transition duration of zero. Temporary theme and motion preferences were restored. No browser console errors were recorded in the final pass.
+
+`outputs/ux-layout-checks.json` contains the recorded layout measurements. Screenshots are `outputs/RecallForge-UX.jpg`, `outputs/RecallForge-UX-Mobile.jpg`, `outputs/RecallForge-UX-Study-Mobile.jpg`, and `outputs/RecallForge-UX-Dark.jpg`. These are local acceptance records. TypeScript and whitespace checks passed; packaging runs a fresh production build. The Rust and persistence implementation is unchanged, so the earlier 82 backend/engine/import checks were not repeated for this presentation pass. Physical iOS, browser text-scaling combinations, and a full assistive-technology audit remain unverified.
+
 ## Partial or deferred
 
 - Onboarding is an inline first-run path with optional starters, subject/deck creation, and editable goals; no multi-step onboarding wizard.
@@ -53,4 +63,4 @@ The subsequent palette refinement uses navy, teal, blue, coral, and amber with c
 
 ## Publication state
 
-The Site is private and unpublished. A saved source/build version is prepared for review. The user explicitly requested approval before final publication, so there is no claimed live hosted preview URL. The local preview uses loopback access and a separate local database.
+Sites reported an existing live address and a deployment for saved version 2 at the start of this UX refinement. This update is prepared as a separate source/build version for review, without invoking a deployment. The user requested approval before final publication. Local preview uses loopback access and a separate database; hosted authentication and storage have not been manually verified in this run.
