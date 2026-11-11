@@ -51,7 +51,7 @@ npm run build
 
 Preview the build with `npm start -- --port 5180`, then run `npm run test:integration` in another terminal. Tests refuse non-loopback URLs and use synthetic accounts. Stop the built preview before rebuilding on Windows.
 
-Latest automated results: 35 Rust tests, 15 Wasm/import checks, and 32 integration checks pass. TypeScript, Rust formatting/Clippy, and the production-format build pass. Browser checks and remaining verification limits are recorded in [FEATURE_VERIFICATION.md](docs/FEATURE_VERIFICATION.md).
+Latest automated results: 35 Rust tests, 15 Wasm/import checks, and 37 integration checks pass. TypeScript, Rust formatting/Clippy, and the production-format build pass. Browser checks and remaining verification limits are recorded in [FEATURE_VERIFICATION.md](docs/FEATURE_VERIFICATION.md).
 
 See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for the domain/storage boundary and [DEPLOYMENT.md](docs/DEPLOYMENT.md) for migrations, secrets, backups, and the saved-version publishing workflow. The complete target specification is preserved in [PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md).
 

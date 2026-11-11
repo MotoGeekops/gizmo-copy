@@ -301,6 +301,18 @@ export default function Library({
       ? d.decks.find((x) => x.id === route.split("/")[1])
       : undefined;
   const subjectId = route.startsWith("library/") ? route.split("/")[1] : "";
+  const openConfirm = (action: any) => {
+    setError("");
+    setConfirmation("");
+    setTarget("");
+    setConfirm(action);
+  };
+  const closeConfirm = () => {
+    setConfirm(null);
+    setConfirmation("");
+    setTarget("");
+    setError("");
+  };
   const mutate = async (operation: string, ids: string[], extra: any = {}) => {
     setBusy(true);
     setError("");
@@ -308,12 +320,13 @@ export default function Library({
       const r = await api("decks", { operation, ids, ...extra });
       await a.reload();
       setSelected([]);
-      setConfirm(null);
-      setConfirmation("");
+      closeConfirm();
       a.toast(
         r.imagesOmitted
           ? "Deck copied. Image cards need the original images and were omitted."
-          : "Library updated.",
+          : operation === "delete"
+            ? `${ids.length === 1 ? "Deck" : "Decks"} moved to recovery.`
+            : "Library updated.",
       );
       if (operation === "delete" && deck) a.go("library");
     } catch (e: any) {
@@ -483,10 +496,7 @@ export default function Library({
                     </IconButton>
                     <IconButton
                       label={`Delete card ${i + 1}`}
-                      onClick={() => {
-                        setConfirm({ cards: [c.id] });
-                        setConfirmation("");
-                      }}
+                      onClick={() => openConfirm({ cards: [c.id] })}
                     >
                       <Trash2 size={16} />
                     </IconButton>
@@ -525,13 +535,13 @@ export default function Library({
               <b>{selected.length} selected</b>
               <Button
                 variant="secondary"
-                onClick={() => setConfirm({ move: true, cards: selected })}
+                onClick={() => openConfirm({ move: true, cards: selected })}
               >
                 Move to deck
               </Button>
               <Button
                 variant="secondary"
-                onClick={() => setConfirm({ cards: selected })}
+                onClick={() => openConfirm({ cards: selected })}
               >
                 Delete
               </Button>
@@ -734,10 +744,7 @@ export default function Library({
                               {deck.archived ? "Restore deck" : "Archive"}
                             </button>
                             <button
-                              onClick={() => {
-                                setConfirm({ ids: [deck.id] });
-                                setConfirmation("");
-                              }}
+                              onClick={() => openConfirm({ ids: [deck.id] })}
                             >
                               <Trash2 size={14} /> Delete
                             </button>
@@ -790,16 +797,13 @@ export default function Library({
                   </Button>
                   <Button
                     variant="secondary"
-                    onClick={() => {
-                      setConfirm({ merge: true, ids: selected });
-                      setTarget("");
-                    }}
+                    onClick={() => openConfirm({ merge: true, ids: selected })}
                   >
                     Merge into…
                   </Button>
                   <Button
                     variant="secondary"
-                    onClick={() => setConfirm({ ids: selected })}
+                    onClick={() => openConfirm({ ids: selected })}
                   >
                     Delete
                   </Button>
@@ -815,7 +819,7 @@ export default function Library({
           </div>
         </>
       )}
-      {error && (
+      {error && !confirm && (
         <p className="error" role="alert">
           {error}
         </p>
@@ -921,10 +925,7 @@ export default function Library({
                   ? "Cards are removed from your library. Study history is retained."
                   : "Decks move to recovery. You can bring them back later."
           }
-          onClose={() => {
-            setConfirm(null);
-            setConfirmation("");
-          }}
+          onClose={closeConfirm}
         >
           {confirm.merge || confirm.move ? (
             <Field label="Destination deck">
@@ -951,8 +952,13 @@ export default function Library({
               />
             </Field>
           )}
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
           <div className="modal-actions">
-            <Button variant="secondary" onClick={() => setConfirm(null)}>
+            <Button variant="secondary" onClick={closeConfirm}>
               Cancel
             </Button>
             <Button
@@ -966,19 +972,20 @@ export default function Library({
               onClick={async () => {
                 if (confirm.cards) {
                   setBusy(true);
+                  setError("");
                   try {
                     await api("cards", {
                       ids: confirm.cards,
-                      operation: confirm.move ? "move" : "delete",
-                      deckId: target,
-                      confirmation,
+                      ...(confirm.move
+                        ? { operation: "move", deckId: target }
+                        : { operation: "delete", confirmation }),
                     });
                     await a.reload();
                     setSelected([]);
-                    setConfirm(null);
-                    a.toast("Cards updated.");
+                    closeConfirm();
+                    a.toast(confirm.move ? "Cards moved." : "Cards deleted.");
                   } catch (e: any) {
-                    a.toast(e.message);
+                    setError(e.message);
                   } finally {
                     setBusy(false);
                   }
@@ -986,7 +993,7 @@ export default function Library({
                   await mutate(
                     confirm.merge ? "merge" : "delete",
                     confirm.ids,
-                    { targetId: target, confirmation },
+                    confirm.merge ? { targetId: target } : { confirmation },
                   );
               }}
             >

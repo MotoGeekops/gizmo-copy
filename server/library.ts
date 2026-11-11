@@ -178,21 +178,28 @@ export async function insertCards(
   return { added };
 }
 export async function mutateDecks(userId: string, body: any) {
+  const input = z.object({
+    ids: z.array(id).min(1).max(100),
+    confirmation: z.string().optional(),
+  });
+  // Older clients send an empty destination on delete; only merge uses it.
   const p = z
-    .object({
-      ids: z.array(id).min(1).max(100),
-      operation: z.enum([
-        "favorite",
-        "archive",
-        "restore",
-        "delete",
-        "recover",
-        "duplicate",
-        "merge",
-      ]),
-      targetId: id.optional(),
-      confirmation: z.string().optional(),
-    })
+    .discriminatedUnion("operation", [
+      input.extend({
+        operation: z.literal("merge"),
+        targetId: z.string().min(1, "Choose a destination deck.").max(100),
+      }),
+      input.extend({
+        operation: z.enum([
+          "favorite",
+          "archive",
+          "restore",
+          "delete",
+          "recover",
+          "duplicate",
+        ]),
+      }),
+    ])
     .parse(body);
   const decks = await Promise.all(
     p.ids.map((key) => owned("decks", key, userId)),
@@ -289,13 +296,18 @@ export async function mutateDecks(userId: string, body: any) {
   return { saved: true };
 }
 export async function mutateCards(userId: string, body: any) {
+  const input = z.object({
+    ids: z.array(id).min(1).max(200),
+    confirmation: z.string().optional(),
+  });
   const p = z
-    .object({
-      ids: z.array(id).min(1).max(200),
-      operation: z.enum(["move", "delete", "duplicate"]),
-      deckId: id.optional(),
-      confirmation: z.string().optional(),
-    })
+    .discriminatedUnion("operation", [
+      input.extend({
+        operation: z.literal("move"),
+        deckId: z.string().min(1, "Choose a destination deck.").max(100),
+      }),
+      input.extend({ operation: z.enum(["delete", "duplicate"]) }),
+    ])
     .parse(body);
   const raw = await Promise.all(
     p.ids.map((key) => owned("cards", key, userId)),

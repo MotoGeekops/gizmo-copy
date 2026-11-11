@@ -400,16 +400,78 @@ try {
     assert.ok(data.cards.some((x) => x.deckId === importDeck.id));
   });
   await call("decks", { ids: [importDeck.id], operation: "restore" });
+  const blockedDelete = await call("decks", {
+    ids: [importDeck.id], operation: "delete", targetId: "", confirmation: "",
+  }, account, 400);
+  await call("decks", {
+    ids: [importDeck.id], operation: "delete", targetId: "", confirmation: "DELETE",
+  }, other, 404);
+  const beforeDelete = await get();
+  ok("deck deletion still requires confirmation and account ownership", () => {
+    assert.match(blockedDelete.error, /Type DELETE/);
+    assert.ok(beforeDelete.decks.some((d) => d.id === importDeck.id));
+  });
   await call("decks", {
     ids: [importDeck.id],
     operation: "delete",
+    targetId: "",
     confirmation: "DELETE",
   });
   let deleted = await get("?recovery=1");
-  ok("deleted decks have a recovery path", () =>
-    assert.ok(deleted.some((x) => x.id === importDeck.id)),
-  );
+  data = await get();
+  ok("the prior UI delete payload succeeds and moves the deck to recovery", () => {
+    assert.ok(deleted.some((x) => x.id === importDeck.id));
+    assert.ok(!data.decks.some((d) => d.id === importDeck.id));
+    assert.ok(!data.cards.some((c) => c.deckId === importDeck.id));
+  });
   await call("decks", { ids: [importDeck.id], operation: "recover" });
+  data = await get();
+  ok("recovering a deleted deck preserves cards, schedules, and progress", () => {
+    const reviews = d => d.cards.filter(c => c.deckId === importDeck.id)
+      .map(c => ({id:c.id,review:c.review})).sort((a,b) => a.id.localeCompare(b.id));
+    assert.deepEqual(reviews(data), reviews(beforeDelete));
+    assert.equal(data.stats.xp, beforeDelete.stats.xp);
+    assert.equal(data.stats.answers, beforeDelete.stats.answers);
+  });
+  const deletionCard = await call("card", {
+    deckId: importDeck.id, type: "qa", front: "Deletion regression test", answer: ["Temporary test card"],
+  });
+  const blockedCardDelete = await call("cards", {
+    ids:[deletionCard.id], operation:"delete", deckId:"", confirmation:"",
+  }, account, 400);
+  const beforeCardDelete = await get();
+  await call("cards", {
+    ids:[deletionCard.id], operation:"delete", deckId:"", confirmation:"DELETE",
+  });
+  data = await get();
+  ok("card deletion accepts the prior empty-destination payload and requires confirmation", () => {
+    assert.match(blockedCardDelete.error, /Confirm deletion/);
+    assert.ok(beforeCardDelete.cards.some(c => c.id === deletionCard.id));
+    assert.ok(!data.cards.some(c => c.id === deletionCard.id));
+  });
+  const invalidMerge = await call("decks", {
+    ids:[importDeck.id], operation:"merge", targetId:"",
+  }, account, 400);
+  const invalidMove = await call("cards", {
+    ids:[beforeMove.id], operation:"move", deckId:"",
+  }, account, 400);
+  data = await get();
+  ok("merge and move still require a valid destination without changing records", () => {
+    assert.match(invalidMerge.error, /Choose a destination deck/);
+    assert.match(invalidMove.error, /Choose a destination deck/);
+    assert.equal(data.decks.find(d => d.id === importDeck.id).archived, false);
+    assert.equal(data.cards.find(c => c.id === beforeMove.id).deckId, importDeck.id);
+  });
+  const mergeSource = await call("deck", {title:"Merge regression source",subjectId:sub.id});
+  const mergeCard = await call("card", {
+    deckId:mergeSource.id,type:"qa",front:"Merge regression card",answer:["Preserved"],
+  });
+  await call("decks", {ids:[mergeSource.id],operation:"merge",targetId:importDeck.id});
+  data = await get();
+  ok("a valid merge moves cards and archives its source deck", () => {
+    assert.equal(data.cards.find(c => c.id === mergeCard.id).deckId, importDeck.id);
+    assert.equal(data.decks.find(d => d.id === mergeSource.id).archived, true);
+  });
   await call("settings", {
     data: { ...data.settings, aiEnabled: true },
     version: data.settingsVersion,

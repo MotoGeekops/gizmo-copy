@@ -5,7 +5,7 @@ This release is a working online study application and a foundation for the comp
 ## Implemented and verified
 
 - Production-format Sites/Vinext build, TypeScript check, real Rust Wasm execution in a local Cloudflare Worker and browser.
-- Thirty-five Rust unit tests; fifteen Wasm/import checks; thirty-two database integration checks, including a clean-account restore. All 82 automated checks passed.
+- Thirty-five Rust unit tests; fifteen Wasm/import checks; thirty-seven database integration checks, including a clean-account restore and deletion regressions. Latest recorded results total 87 passing checks.
 - Private-account API authorization, cross-account denial, cross-origin write denial, parameterized persistence, and R2 image ownership.
 - Subject creation, deck creation, card creation/editing, refresh persistence, real due dates, resumable sessions, XP deduplication, daily goals, Manila streaks, and deterministic achievements.
 - Five QA plus two cloze cards; correct and incorrect responses; wrong-card retry; completion; statistics; refresh; valid export; clean-account backup restore with equal schedules and history.
@@ -48,6 +48,16 @@ Browser checks covered the library, study, exams, statistics, achievements, sett
 Measured switches and color controls were 44 × 44 CSS px. The study answer input used 16 px text and exceeded the 44 px control height. Color selection and Escape dismissal, centered dialogs, full mobile card-format labels, session resume/pause, card reveal, preference saves, and keyboard access through the skip link were exercised. A focused mobile switch remained clear of the dirty save bar. Dark colors were reviewed independently; enabling reduced motion produced a computed transition duration of zero. Temporary theme and motion preferences were restored. No browser console errors were recorded in the final pass.
 
 `outputs/ux-layout-checks.json` contains the recorded layout measurements. Screenshots are `outputs/RecallForge-UX.jpg`, `outputs/RecallForge-UX-Mobile.jpg`, `outputs/RecallForge-UX-Study-Mobile.jpg`, and `outputs/RecallForge-UX-Dark.jpg`. These are local acceptance records. TypeScript and whitespace checks passed; packaging runs a fresh production build. The Rust and persistence implementation is unchanged, so the earlier 82 backend/engine/import checks were not repeated for this presentation pass. Physical iOS, browser text-scaling combinations, and a full assistive-technology audit remain unverified.
+
+## Deletion regression verification
+
+The reported deck deletion error was reproduced against the previous build using the exact request shape emitted by its confirmation dialog: `operation: "delete"`, `targetId: ""`, and a correct `DELETE` confirmation. The server returned HTTP 400 with the same minimum-length error shown in the user's screenshot. The destination was unused for deletion, but the shared schema still validated it. Card deletion had the equivalent issue with an unused `deckId`.
+
+The interface now sends destination fields only for merge/move. The server validates the fields used by each operation, so existing cached pages that still send an unused empty destination can also delete successfully after the server update. Required destinations, typed confirmation, and account ownership remain enforced. Confirmation state is reset when opening or closing an action. Request errors remain visible inside the confirmation dialog.
+
+The rebuilt Worker passed all 37 integration checks. New coverage verifies deletion confirmation and account ownership, the prior UI payload, removal from the active library, recovery with identical card review state and XP, card deletion, rejection of empty merge/move destinations without record changes, and a valid merge. Existing study, image, backup, restore, and authorization checks also passed. TypeScript and the production build passed; the Rust engine was unchanged.
+
+Browser QA created a local five-card sample, deleted it through the deck menu, recovered it, and refreshed to verify all five cards persisted. The temporary sample was then moved back to recovery, leaving the original active library intact. The final browser console contained no errors. `outputs/RecallForge-Deletion-Recovery.jpg` records the recoverable result. This is a local test build; the hosted update awaits publication approval.
 
 ## Partial or deferred
 
