@@ -59,6 +59,38 @@ The rebuilt Worker passed all 37 integration checks. New coverage verifies delet
 
 Browser QA created a local five-card sample, deleted it through the deck menu, recovered it, and refreshed to verify all five cards persisted. The temporary sample was then moved back to recovery, leaving the original active library intact. The final browser console contained no errors. `outputs/RecallForge-Deletion-Recovery.jpg` records the recoverable result. This is a local test build; the hosted update awaits publication approval.
 
+## Study-first interface verification
+
+On November 12, the user asked for an app they could open and simply study.
+The dashboard was replaced by a single study action and up to five recent deck
+rows. A compact header contains Study, Library, and More. Optional tools and
+custom sessions remain available through More; old dashboard links still work.
+The sidebar, duplicate search, overview charts, targets, exam prompts, preview
+card, starter shelf, and footer are omitted from the opening page. Empty
+libraries have import/create actions and a collapsed optional sample.
+
+Browser checks exercised automatic session creation, direct deck study,
+resuming the existing saved session, pause and return, the finish confirmation,
+the saved result, and expansion of optional session metrics. The existing
+session and its unanswered cards were preserved; new local test sessions were
+finished without recording answers. The finish confirmation uses the existing
+in-app dialog rather than a blocking browser confirm. Question feedback shows
+the answer and explanation without XP or scheduling metadata; accounting and
+scheduling continue on the server. Session details retain the complete review.
+
+Phone, landscape, and desktop layouts were reviewed, including the More menu,
+Escape dismissal and focus return, optional study settings, Library, and light
+and dark home views. Screenshots and measurements are recorded under
+`outputs/RecallForge-Simple*` and `outputs/simple-layout-checks.json`. Temporary
+appearance changes were restored to Light. The empty state was inspected in
+source, rather than erasing the existing local library for a browser test.
+
+All 37 existing integration checks passed on the rebuilt local Worker. Later
+changes were limited to frontend feedback and settings copy; TypeScript passed.
+The final package runs a production-format build. Rust and import logic were
+unchanged, so their earlier tests were not repeated. Physical-phone and full
+assistive-technology verification remain outside these browser checks.
+
 ## Partial or deferred
 
 - Onboarding is an inline first-run path with optional starters, subject/deck creation, and editable goals; no multi-step onboarding wizard.
@@ -73,4 +105,4 @@ Browser QA created a local five-card sample, deleted it through the deck menu, r
 
 ## Publication state
 
-Sites reported an existing live address and a deployment for saved version 2 at the start of this UX refinement. This update is prepared as a separate source/build version for review, without invoking a deployment. The user requested approval before final publication. Local preview uses loopback access and a separate database; hosted authentication and storage have not been manually verified in this run.
+Sites confirmed that version 4 is live at the start of the study-first refinement. This update is prepared as a separate source/build version for review, without invoking a deployment. The user requested approval before final publication. Local preview uses loopback access and a separate database; hosted workflows have not been manually verified in this run.

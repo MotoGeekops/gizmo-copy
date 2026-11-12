@@ -35,6 +35,7 @@ import {
   Progress,
   SectionTitle,
   Ring,
+  Modal,
 } from "./ui";
 import { RichText } from "./rich-text";
 import type { AppActions } from "./app";
@@ -107,8 +108,9 @@ export function StudyHome({ a }: { a: AppActions }) {
     <>
       <div className="page-heading">
         <div>
-          <h1>Study</h1>
-          <p>Choose a mode, select your decks, and set up a session.</p>
+          <a className="back-link" href="#study"><ArrowLeft size={16} /> Back to study</a>
+          <h1>Study options</h1>
+          <p>Adjust a session when you want something different.</p>
         </div>
       </div>
       {active.length > 0 && (
@@ -153,7 +155,6 @@ export function StudyHome({ a }: { a: AppActions }) {
                 </span>
                 <span className="mode-radio">{mode === m.id && <span />}</span>
               </div>
-              <small>{m.tag}</small>
               <h2>{m.name}</h2>
               <p>{m.text}</p>
             </button>
@@ -324,6 +325,7 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
     [revealed, setRevealed] = useState(false),
     [hint, setHint] = useState(false),
     [busy, setBusy] = useState(false),
+    [confirmFinish, setConfirmFinish] = useState(false),
     [error, setError] = useState(""),
     [remaining, setRemaining] = useState<number | null>(null),
     [browse, setBrowse] = useState(0),
@@ -366,6 +368,7 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
       const s = await api<Session>("finish", { id });
       setSession(s);
       setCard(null);
+      setConfirmFinish(false);
       await a.reload();
       setError("");
     } catch (e: any) {
@@ -460,6 +463,7 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
   useEffect(() => {
     if (!a.data.settings.keyboard) return;
     const handler = (e: KeyboardEvent) => {
+      if (confirmFinish) return;
       const input = ["INPUT", "TEXTAREA", "SELECT"].includes(
         (e.target as HTMLElement).tagName,
       );
@@ -499,6 +503,7 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
     response,
     order,
     busy,
+    confirmFinish,
     a.data.settings.keyboard,
   ]);
   const matchOptions = useMemo(
@@ -509,7 +514,7 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
     return error ? (
       <Empty
         title="We couldn’t open this session"
-        action={<Button onClick={load}>Try again</Button>}
+        action={<div className="results-actions"><Button onClick={load}>Try again</Button><Button variant="secondary" onClick={() => a.go("study")}>Back to study</Button></div>}
       >
         {error}
       </Empty>
@@ -527,7 +532,7 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
       <div className="session-results">
         <div className="results-celebration">
           <span>
-            <Trophy size={34} />
+            <Check size={34} />
           </span>
 
           <h1>{session.cursor ? "Session complete" : "Session saved"}</h1>
@@ -537,6 +542,11 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
               : "Your cards will be here when you’re ready."}
           </p>
         </div>
+        <div className="results-actions">
+          <Button onClick={() => a.go("study")}>Back to study <ArrowRight size={17} /></Button>
+        </div>
+        <details className="results-details">
+        <summary>Review this session <ChevronDown size={16} /></summary>
         <div className="results-metrics">
           <div>
             <strong>{percent}%</strong>
@@ -559,14 +569,6 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
             <strong>{Math.max(0, Math.round(session.duration / 60))}m</strong>
             <span>Active answer time</span>
           </div>
-        </div>
-        <div className="results-actions">
-          <Button onClick={() => a.go("study")}>
-            Study again <ArrowRight size={17} />
-          </Button>
-          <Button variant="secondary" onClick={() => a.go("dashboard")}>
-            Back to dashboard
-          </Button>
         </div>
         {answers.length > 0 && (
           <section className="panel">
@@ -610,6 +612,7 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
             ))}
           </section>
         )}
+        </details>
       </div>
     );
   }
@@ -655,14 +658,7 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
           )}
           <Button
             variant="ghost"
-            onClick={() => {
-              if (
-                window.confirm(
-                  "Finish this session and save the answers you have completed?",
-                )
-              )
-                finish();
-            }}
+            onClick={() => setConfirmFinish(true)}
           >
             Finish <Flag size={15} />
           </Button>
@@ -898,22 +894,11 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
               <h3>
                 {feedback.correct ? "Correct answer" : "Incorrect answer"}
               </h3>
-              <b>
-                {feedback.xp
-                  ? `+${feedback.xp} XP`
-                  : feedback.correct
-                    ? "Already rewarded today"
-                    : ""}
-              </b>
             </div>
             <p>
               <strong>Correct answer:</strong> {feedback.answer.join(" · ")}
             </p>
             {feedback.explanation && <p>{feedback.explanation}</p>}
-            <small>
-              {feedback.manual ? "Self graded · " : ""}Next review{" "}
-              {formatDue(feedback.nextReview)}
-            </small>
           </div>
         )}
       </div>
@@ -1061,19 +1046,13 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
           </>
         )}
       </p>
+      {confirmFinish && <Modal title="Finish for now?" description="Your completed answers will be saved. You can study the remaining cards in a new session." onClose={() => { if (!busy) setConfirmFinish(false); }}>
+        {error && <p className="error" role="alert">{error}</p>}
+        <div className="modal-actions">
+          <Button variant="secondary" disabled={busy} onClick={() => setConfirmFinish(false)}>Keep studying</Button>
+          <Button busy={busy} onClick={() => finish()}>Finish session</Button>
+        </div>
+      </Modal>}
     </div>
   );
-}
-function formatDue(ms: number) {
-  if (!ms) return "after your next review";
-  const diff = ms - Date.now();
-  if (diff < 120000) return "in about a minute";
-  if (diff < 3600000) return `in about ${Math.round(diff / 60000)} minutes`;
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZone: "Asia/Manila",
-  }).format(ms);
 }

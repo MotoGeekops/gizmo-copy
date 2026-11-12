@@ -6,6 +6,8 @@ RecallForge is a private personal study application with a React/Vinext interfac
 
 This version provides a working online study workflow. Updates are prepared for review; publication requires the approval requested in the build brief. The [feature report](docs/FEATURE_VERIFICATION.md) distinguishes verified, partial, and deferred capabilities.
 
+The app opens straight to a quiet study page: start or continue a session, or choose a deck. Library holds organization and search. More holds optional study modes, exams, statistics, achievements, tutor, and settings. Navigation steps aside while answering cards.
+
 ## Start locally
 
 Open this directory in a terminal and run:

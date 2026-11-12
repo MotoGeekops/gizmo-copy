@@ -902,11 +902,6 @@ export function Settings({ a }: { a: AppActions }) {
                   "Reduce motion",
                   "Keep transitions calm and immediate.",
                 ],
-                [
-                  "hideStreak",
-                  "Hide your streak",
-                  "Leave streaks out of the dashboard header.",
-                ],
               ] as const
             ).map(([key, title, description]) => (
               <SettingRow title={title} description={description} key={key}>

@@ -1,44 +1,56 @@
 # RecallForge interface direction
 
-The user rejected the initial interface as generic and requested Anthropic's frontend-design skill. The installed skill was read from `C:/Users/gamin/.agents/skills/frontend-design/SKILL.md`.
+RecallForge should feel like somewhere to study, with one obvious next action.
+The user found the dashboard overwhelming. This revision reduces decisions on
+arrival and reserves management and statistics for intentional navigation.
 
-## Design plan
+## Plan
 
-RecallForge is a daily study desk for a senior high school student. A usable index card is its central visual object. The interface should make reviewing, organizing a deck, and seeing the next useful action feel immediate.
+Keep the established palette and self-hosted fonts: paper #F5F7FA, white #FFFFFF,
+slate #213247, navy #29465B, teal #22776D, and blue #406D91. Teal identifies the
+study action. Saved subject colors remain small organizational marks. Bricolage
+Grotesque carries the short heading; DM Sans carries questions and controls.
 
-Palette: paper `#F5F7FA`, navy `#29465B`, teal `#22776D`, blue `#406D91`, coral `#A4513E`, and amber `#91601B`. White cards and slate text provide the neutral base. Navy anchors navigation and general actions; teal identifies study and success; blue marks learning; coral marks due work and exams; amber identifies targets, XP, and achievements. Each accent has a quiet surface tint and a separately tuned dark-theme value. User-selected subject colors remain meaningful organizational marks.
+Use a single left-aligned column, generous space, and a plain list of recent decks.
+The opening view contains a short invitation and one primary button. Saved
+sessions replace Start studying with Continue studying. Automatic sessions use
+the existing recall mode, due/new selection, daily session size, and scheduler.
 
-Type: Bricolage Grotesque for page titles and the product wordmark; DM Sans for controls, prose, and numbers. Titles are expressive, while the working interface uses readable 13–16 px text. Both fonts are hosted locally.
+    RecallForge                         Study   Library   More
 
-Layout: left-aligned navigation and content. One real card anchors the study overview. Decks form a working list; the smaller side column holds the daily target, actual activity, and exam information. Sections have different visual treatments according to their role.
+                  Let's study.
+                  One short sentence.
+                  [ Start studying ]
 
-```text
-navigation | page title                  create / import
-           | review summary     | interactive index card
-           | actual learning totals
-           | recent deck rows   | daily target
-           |                    | study activity
-           | optional starters  | next exam
-```
+                  Your decks             Add material
+                  deck title                      Study
+                  deck title                      Study
 
-On mobile, the same hierarchy becomes a single column with bottom navigation and touch-sized study controls.
+Remove the permanent sidebar, duplicate dashboard destination, search bar,
+streak, XP, goals, charts, exam prompts, sample shelf, preview card, and private
+workspace footer from the entry point. Library keeps deck organization and
+search. More contains study options, exams, statistics, achievements, tutor, and
+settings. Preserve old dashboard links as an alias for the study home.
 
-Principles: use the flashcard itself as product identity; give color a consistent role; make every label informational; show honest activity and empty states; keep study input and review feedback central; animate only in response to actions.
+During a session, omit the global header. Keep pause, progress, the current
+question, and answer controls. At completion, show the saved result and one
+way home; detailed metrics and answer review are a closed disclosure.
 
-## Review against the brief
+## Review against the request
 
-The earlier gradient hero, decorative card illustration, tiny pale text, repeated motivational copy, and uniform panel grid weakened the everyday study task. The revised plan uses the actual recall interaction as its distinctive element. Display and body type have different jobs, subject tabs express organization, and the overview varies density by information priority. The layout keeps the existing eight navigation destinations and their working behavior.
+The previous index-card stage still asked the user to interpret too many regions.
+A simpler layout serves this request better than adding decoration. The visual
+identity now comes from the material itself and restrained deck spines. No
+additional gamification, coaching panels, or motivational sections are added.
 
-This redesign changes presentation and copy. Rust evaluation, scheduling, database ownership, sessions, XP, imports, and backup logic remain the existing verified implementation.
+The installed frontend-design and ui-ux-pro-max skills were read. The generated
+minimalism guidance fits; its marketing page pattern does not and is excluded.
+The disclosure database query did not produce a verified match. Disclosure and
+navigation decisions follow the skill's bundled quick-reference rules for
+progressive-disclosure, nav-hierarchy, and overflow-menu. Existing palette and
+typography are retained rather than adopting unrelated generated defaults.
 
-## Palette refinement
-
-The user asked for a clean palette with more than one color. The earlier violet treatment covered most surfaces and secondary details, leaving the other palette colors almost invisible. The revised palette keeps the existing layout and typography. The index-card stack uses mint and peach backing sheets, the daily target has an amber surface, and the four learning totals use labeled accents. Navigation and form borders return to cool neutrals. Charts, study modes, and earned achievements use the same color roles throughout. Saved subject and deck colors are preserved; the picker and new starter decks offer coordinated choices.
-
-## Readability and interaction refinement
-
-The next pass applies the installed UI/UX guidance to the existing interface. It keeps the palette, typefaces, layout concept, and working study behavior. Searches were limited to readable text, touch targets, and React form semantics; this is a focused refinement of an existing app.
-
-Use a shared rem-based type scale: 13 px captions, 14 px labels, 16 px reading and control text, and 18 px section headings at the default browser text size. Essential labels reflow rather than shrink on narrow screens. Desktop and phone layouts use the same scale. Use 44 px control targets, 48 px primary phone actions, a small 4/8 px spacing scale, comfortable form groups, and consistent focus and pressed feedback. Compact switches and color swatches retain small visual marks inside larger controls. Keep fixed mobile controls clear of safe areas and leave scroll clearance beneath them.
-
-Review the dashboard, library, card editor, study, and settings on desktop and phone. Check the remaining pages for wrapping and hierarchy, include a narrow landscape size, verify dark colors independently, and retain reduced-motion behavior. These checks are scoped browser verification rather than a claim of a complete accessibility audit.
+This changes navigation and presentation. Rust evaluation, scheduling,
+ownership, sessions, XP accounting, imports, backups, and recovery keep their
+existing behavior. Desktop, mobile, keyboard, empty states, saved-session resume,
+one-click start, and completion require browser verification before delivery.
