@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320" role="img" aria-label="RecallForge — Study smarter. Remember longer.">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E1722" />
+      <stop offset="55%" stop-color="#172738" />
+      <stop offset="100%" stop-color="#1A3342" />
+    </linearGradient>
+    <radialGradient id="glowTeal" cx="84%" cy="22%" r="48%">
+      <stop offset="0%" stop-color="#22776D" stop-opacity="0.34" />
+      <stop offset="100%" stop-color="#22776D" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowBlue" cx="15%" cy="85%" r="45%">
+      <stop offset="0%" stop-color="#406D91" stop-opacity="0.28" />
+      <stop offset="100%" stop-color="#406D91" stop-opacity="0" />
+    </radialGradient>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.1" fill="#8FA8BE" fill-opacity="0.12" />
+    </pattern>
+  </defs>
+
+  <!-- Canvas -->
+  <rect width="1200" height="320" rx="20" fill="url(#bg)" />
+  <rect width="1200" height="320" rx="20" fill="url(#dots)" />
+  <rect width="1200" height="320" rx="20" fill="url(#glowTeal)" />
+  <rect width="1200" height="320" rx="20" fill="url(#glowBlue)" />
+  <rect x="1" y="1" width="1198" height="318" rx="19" fill="none" stroke="#2D465E" stroke-opacity="0.65" stroke-width="1.5" />
+
+  <!-- Decorative stacked flashcard motif on the right -->
+  <g transform="translate(865, 52)" opacity="0.95">
+    <rect x="34" y="24" width="224" height="156" rx="14" transform="rotate(6 146 102)" fill="#20384D" stroke="#365773" stroke-width="1.2" />
+    <rect x="16" y="14" width="224" height="156" rx="14" transform="rotate(-3 128 92)" fill="#1A2E40" stroke="#2F4E69" stroke-width="1.2" />
+    <rect x="0" y="6" width="224" height="156" rx="14" fill="#132231" stroke="#3B6282" stroke-width="1.4" />
+    <!-- Card ruled lines & active recall pill -->
+    <rect x="20" y="24" width="66" height="20" rx="10" fill="#22776D" fill-opacity="0.25" stroke="#38A396" stroke-opacity="0.55" stroke-width="1" />
+    <text x="53" y="38" text-anchor="middle" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" font-weight="600" fill="#6ED3C6">RECALL</text>
+    <line x1="20" y1="68" x2="196" y2="68" stroke="#36536E" stroke-width="1.5" stroke-linecap="round" />
+    <line x1="20" y1="92" x2="170" y2="92" stroke="#2A445C" stroke-width="1.5" stroke-linecap="round" />
+    <line x1="20" y1="116" x2="132" y2="116" stroke="#2A445C" stroke-width="1.5" stroke-linecap="round" />
+    <rect x="20" y="132" width="84" height="14" rx="7" fill="#22776D" />
+    <rect x="112" y="132" width="54" height="14" rx="7" fill="#29465B" />
+  </g>
+
+  <!-- ForgeMark App Icon -->
+  <g transform="translate(76, 86)">
+    <rect x="0" y="0" width="92" height="92" rx="22" fill="#22776D" fill-opacity="0.16" stroke="#38A396" stroke-opacity="0.45" stroke-width="1.5" />
+    <g transform="translate(17, 17) scale(1.82)">
+      <rect x="5" y="8" width="17" height="21" rx="3" transform="rotate(-10 5 8)" fill="#6ED3C6" opacity="0.42" />
+      <rect x="10" y="4" width="17" height="22" rx="3" fill="#F5F7FA" />
+      <path d="M15 10h7M15 14h5M15 18h3" stroke="#22776D" stroke-width="2" stroke-linecap="round" />
+    </g>
+  </g>
+
+  <!-- Title & Tagline -->
+  <text x="196" y="128" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="50" font-weight="800" letter-spacing="-1.2" fill="#F5F7FA">RecallForge</text>
+  <text x="198" y="166" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="22" font-weight="500" fill="#B6C7D6">Study smarter. Remember longer.</text>
+
+  <!-- Feature Pills -->
+  <g transform="translate(198, 198)" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600">
+    <rect x="0" y="0" width="122" height="30" rx="15" fill="#1C3144" stroke="#365672" stroke-width="1" />
+    <circle cx="16" cy="15" r="4" fill="#6ED3C6" />
+    <text x="28" y="19.5" fill="#DCE6EF">Rust + Wasm</text>
+
+    <rect x="134" y="0" width="150" height="30" rx="15" fill="#1C3144" stroke="#365672" stroke-width="1" />
+    <circle cx="150" cy="15" r="4" fill="#7FB3D5" />
+    <text x="162" y="19.5" fill="#DCE6EF">Spaced Repetition</text>
+
+    <rect x="296" y="0" width="152" height="30" rx="15" fill="#1C3144" stroke="#365672" stroke-width="1" />
+    <circle cx="312" cy="15" r="4" fill="#F2B880" />
+    <text x="324" y="19.5" fill="#DCE6EF">Cloudflare D1 / R2</text>
+
+    <rect x="460" y="0" width="132" height="30" rx="15" fill="#1C3144" stroke="#365672" stroke-width="1" />
+    <circle cx="476" cy="15" r="4" fill="#A9C7E0" />
+    <text x="488" y="19.5" fill="#DCE6EF">React + Vinext</text>
+  </g>
+</svg>
