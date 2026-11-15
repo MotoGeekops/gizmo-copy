@@ -39,8 +39,33 @@ const MODEL_PATTERNS: Record<AiProviderId, RegExp> = {
 
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
+/**
+ * Merges Worker bindings with process.env so variables set in the hosting
+ * dashboard are found whichever way the platform exposes them.
+ */
+export function aiEnv(env: unknown): Record<string, unknown> {
+  const proc =
+    (globalThis as { process?: { env?: Record<string, unknown> } }).process
+      ?.env || {};
+  const out: Record<string, unknown> = {};
+  for (const name of [
+    "AI_PROVIDER",
+    "AI_MODEL",
+    "GEMINI_API_KEY",
+    "GEMINI_MODEL",
+    "OPENROUTER_API_KEY",
+    "OPENROUTER_MODEL",
+    "OPENROUTER_SITE_URL",
+    "OPENROUTER_APP_NAME",
+  ]) {
+    const v = (env as Record<string, unknown> | undefined)?.[name];
+    out[name] = str(v) ? v : proc[name];
+  }
+  return out;
+}
+
 export function resolveAiProvider(env: unknown): AiProviderConfig | null {
-  const e = (env || {}) as Record<string, unknown>;
+  const e = aiEnv(env);
   const keys: Record<AiProviderId, string> = {
     gemini: str(e.GEMINI_API_KEY),
     openrouter: str(e.OPENROUTER_API_KEY),
@@ -70,7 +95,7 @@ export function isValidModel(provider: AiProviderId, model: string) {
 
 /** Optional OpenRouter attribution headers (https://openrouter.ai/docs). */
 export function openRouterHeaders(env: unknown): Record<string, string> {
-  const e = (env || {}) as Record<string, unknown>;
+  const e = aiEnv(env);
   const headers: Record<string, string> = {
     "X-Title": str(e.OPENROUTER_APP_NAME).slice(0, 100) || "RecallForge",
   };
