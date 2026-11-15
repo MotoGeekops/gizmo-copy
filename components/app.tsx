@@ -4,7 +4,7 @@ import {
   BookOpen, Layers, Brain, CalendarDays, ChartNoAxesCombined, Trophy,
   Settings2, ArrowRight, ChevronDown, SlidersHorizontal, Check, X, Loader2,
 } from "lucide-react";
-import { Button, IconButton, ForgeMark, Empty, Progress } from "./ui";
+import { Button, IconButton, ForgeMark, Empty, Progress, deckSwatch } from "./ui";
 import { request } from "../lib/client";
 import { type AppData } from "../lib/types";
 import Library, { DeckDialog, SubjectDialog } from "./library";
@@ -173,19 +173,24 @@ export default function RecallForge() {
 }
 
 export function DeckTile({ deck, a, actions }: { deck: any; a: AppActions; actions?: ReactNode }) {
+  const subject = a.data.subjects.find((s) => s.id === deck.subjectId)?.name;
   return (
-    <article className="deck-tile" style={{ "--deck-color": deck.color } as React.CSSProperties}>
+    <article className="deck-tile" data-swatch={deckSwatch(deck)}>
       <div className="deck-tile-top">
-        <span className="deck-icon"><BookOpen size={23} /></span>
-        {actions || <span className="deck-subject">{a.data.subjects.find((s) => s.id === deck.subjectId)?.name || "Subject"}</span>}
+        <span className={`deck-badge ${deck.due ? "is-due" : ""}`}>
+          {deck.due ? `Due: ${deck.due}` : deck.count ? "All caught up" : "No cards yet"}
+        </span>
+        {actions}
       </div>
       <a className="deck-title" href={`#deck/${deck.id}`}>{deck.title}</a>
-      <p>{deck.description || "Add a description for this deck."}</p>
-      <div className="deck-count"><Layers size={13} />{deck.count} cards {deck.sample && <span className="sample-label">Sample</span>}</div>
-      <div className="deck-mastery"><Progress value={deck.mastery} /><span>{deck.mastery}%</span></div>
-      <div className="deck-tile-footer">
-        <span>{deck.due ? <><i />{deck.due} due for review</> : deck.count ? "Ready when you are" : "Add your first card"}</span>
-        <a href={`#deck/${deck.id}`} aria-label={`Open ${deck.title}`}><ArrowRight size={16} /></a>
+      <p className="deck-meta">
+        {deck.count} {deck.count === 1 ? "card" : "cards"}
+        {subject ? <> · {subject}</> : null}
+        {deck.sample && <span className="sample-label">Sample</span>}
+      </p>
+      <div className="deck-mastery">
+        <div className="deck-mastery-label"><span>Mastery</span><span>{deck.mastery}%</span></div>
+        <Progress value={deck.mastery} />
       </div>
     </article>
   );

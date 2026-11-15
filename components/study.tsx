@@ -944,9 +944,9 @@ export function StudySession({ a, id }: { a: AppActions; id: string }) {
                 className={`rating rating-${n}`}
                 onClick={() => submit(+n, true)}
               >
+                <kbd aria-hidden="true">{n}</kbd>
                 <strong>{label}</strong>
                 <small>{sub}</small>
-                <kbd>{n}</kbd>
               </button>
             ))}
           </div>

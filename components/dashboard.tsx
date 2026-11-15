@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { BookOpen, ChevronRight, Plus, Play, Upload } from "lucide-react";
+import { ChevronRight, Plus, Play, Upload } from "lucide-react";
 import type { AppActions } from "./app";
-import { Button } from "./ui";
+import { Button, deckSwatch } from "./ui";
 import { api } from "../lib/client";
 import { uid } from "../lib/types";
 
@@ -80,16 +80,17 @@ export default function Dashboard({ a }: { a: AppActions }) {
           <AddMaterial a={a} />
         </div>
         <div className="study-deck-list">
-          {recent.map((deck) => <div className="study-deck-row" key={deck.id}>
+          {recent.map((deck) => <div className="study-deck-row" data-swatch={deckSwatch(deck)} key={deck.id}>
             <a className="study-deck-open" href={`#deck/${deck.id}`}>
-              <span className="study-deck-mark" style={{ "--deck-color": deck.color } as React.CSSProperties}><BookOpen size={20} /></span>
               <span className="study-deck-title"><strong>{deck.title}</strong><small>
-                {d.subjects.find((s) => s.id === deck.subjectId)?.name}{" · "}{deck.count} {deck.count === 1 ? "card" : "cards"}
+                {deck.count} {deck.count === 1 ? "card" : "cards"}
+                {d.subjects.find((s) => s.id === deck.subjectId)?.name ? ` · ${d.subjects.find((s) => s.id === deck.subjectId)?.name}` : ""}
               </small></span>
+              {deck.due > 0 && <span className="deck-badge is-due">Due: {deck.due}</span>}
             </a>
-            {deck.count ? <button className="quiet-link deck-study" aria-label={`Study ${deck.title}`} disabled={busy} onClick={() => start(deck.id)}>
+            {deck.count ? <button className="deck-study" aria-label={`Study ${deck.title}`} disabled={busy} onClick={() => start(deck.id)}>
               Study <ChevronRight size={16} />
-            </button> : <a className="quiet-link deck-study" href={`#deck/${deck.id}`}>Add cards <ChevronRight size={16} /></a>}
+            </button> : <a className="deck-study" href={`#deck/${deck.id}`}>Add cards <ChevronRight size={16} /></a>}
           </div>)}
         </div>
         {decks.length > 5 && <a className="quiet-link all-decks" href="#library">See all decks <ChevronRight size={16} /></a>}

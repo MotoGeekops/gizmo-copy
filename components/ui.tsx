@@ -210,3 +210,28 @@ export function ForgeMark({ small = false }: { small?: boolean }) {
     </span>
   );
 }
+const SWATCHES = ["cobalt", "vermilion", "mustard", "fern"] as const;
+export type Swatch = (typeof SWATCHES)[number];
+/**
+ * The color-block a deck is drawn in. It follows the color the user picked for
+ * the deck (nearest of the four theme swatches by hue), and falls back to a
+ * stable hash of the id when the color is missing or unreadable.
+ */
+export function deckSwatch(deck: { id: string; color?: string }): Swatch {
+  const hex = /^#?([0-9a-f]{6})$/i.exec(deck.color || "")?.[1];
+  if (hex) {
+    const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+    const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+    if (d > 0.04) {
+      const h = (max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4) * 60;
+      const hue = (h + 360) % 360;
+      if (hue < 25 || hue >= 330) return "vermilion";
+      if (hue < 65) return "mustard";
+      if (hue < 190) return "fern";
+      return "cobalt";
+    }
+  }
+  let n = 0;
+  for (let i = 0; i < deck.id.length; i++) n = (n * 31 + deck.id.charCodeAt(i)) >>> 0;
+  return SWATCHES[n % SWATCHES.length];
+}
