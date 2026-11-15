@@ -49,13 +49,18 @@ In another terminal, run `npm run test:integration`. The integration suite refus
 
 No secret is needed for normal study features. Supported runtime values:
 
-| Variable             | Purpose                                          |
-| -------------------- | ------------------------------------------------ |
-| `GEMINI_API_KEY`     | Gemini provider secret; chosen when present      |
-| `OPENROUTER_API_KEY` | OpenRouter provider secret when Gemini is absent |
-| `AI_MODEL`           | Provider-specific model identifier               |
+| Variable              | Purpose                                                                  |
+| --------------------- | ------------------------------------------------------------------------ |
+| `GEMINI_API_KEY`      | Gemini provider secret; chosen when present                              |
+| `OPENROUTER_API_KEY`  | OpenRouter provider secret when Gemini is absent                         |
+| `AI_PROVIDER`         | Optional `gemini` or `openrouter`; forces the provider                   |
+| `AI_MODEL`            | Model identifier for the active provider                                 |
+| `OPENROUTER_MODEL`    | OpenRouter slug (`vendor/model[:variant]`); overrides `AI_MODEL`         |
+| `GEMINI_MODEL`        | Gemini model name; overrides `AI_MODEL`                                  |
+| `OPENROUTER_SITE_URL` | Optional public URL sent to OpenRouter as `HTTP-Referer` (attribution)   |
+| `OPENROUTER_APP_NAME` | Optional app title sent to OpenRouter as `X-Title` (default RecallForge) |
 
-Defaults are `gemini-2.5-flash` and `openrouter/auto`; model availability and charges are provider-controlled. This release has not verified a live call. Enable AI in the application's Settings only when ready to send the chosen material to the configured provider.
+Defaults are `gemini-2.5-flash` and `openrouter/auto`. OpenRouter is called through its OpenAI-compatible `/api/v1/chat/completions` endpoint; any model slug listed at openrouter.ai/models works, including `:free` variants. QA generation requests JSON output, so prefer models that support structured output, and avoid reasoning-only models with small output budgets. Model availability and charges are provider-controlled. This release has not verified a live call. Enable AI in the application's Settings only when ready to send the chosen material to the configured provider.
 
 For local development, put values in an ignored `.dev.vars` file. For production, use Sites runtime environment variables through the native Sites tools. Never put keys in the browser, hosting manifest, Git, or chat. No OpenAI key is required by this application.
 

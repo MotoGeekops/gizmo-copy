@@ -3,6 +3,14 @@ import { z } from "zod";
 import { one, run, stmt, uid, db, loadCards, parse } from "./store";
 import { check, cardSchema, HttpError } from "./validation";
 import { dayIndex } from "../lib/types";
+import {
+  resolveAiProvider,
+  isValidModel,
+  openRouterHeaders,
+  openRouterContent,
+  openRouterError,
+  parseJsonObject,
+} from "./ai-provider";
 export async function aiAction(userId: string, input: unknown) {
   const p = z
     .object({
@@ -24,13 +32,19 @@ export async function aiAction(userId: string, input: unknown) {
     "Enable AI in Settings before sending study material to a provider.",
     403,
   );
-  const config = env as any;
-  const key = config.GEMINI_API_KEY || config.OPENROUTER_API_KEY;
+  const provider = resolveAiProvider(env);
   check(
-    key,
+    provider,
     "AI is not configured. Basic studying and the non-AI import parser work without an API key.",
     503,
   );
+  check(
+    isValidModel(provider!.id, provider!.model),
+    "AI model name is invalid. Check AI_MODEL, OPENROUTER_MODEL or GEMINI_MODEL.",
+    503,
+  );
+  const { key, model } = provider!;
+  const isGemini = provider!.id === "gemini";
   const today = dayIndex(),
     start = today * 86400000 - 28800000,
     id = uid();
@@ -66,9 +80,7 @@ export async function aiAction(userId: string, input: unknown) {
   });
   try {
     let response: Response;
-    if (config.GEMINI_API_KEY) {
-      const model = config.AI_MODEL || "gemini-2.5-flash";
-      check(/^[a-zA-Z0-9._-]+$/.test(model), "AI model name is invalid.", 503);
+    if (isGemini) {
       response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
         {
@@ -97,9 +109,10 @@ export async function aiAction(userId: string, input: unknown) {
         headers: {
           Authorization: `Bearer ${key}`,
           "Content-Type": "application/json",
+          ...openRouterHeaders(env),
         },
         body: JSON.stringify({
-          model: config.AI_MODEL || "openrouter/auto",
+          model,
           messages: [
             { role: "system", content: system },
             { role: "user", content: message },
@@ -112,17 +125,39 @@ export async function aiAction(userId: string, input: unknown) {
         }),
         signal: AbortSignal.timeout(45000),
       });
-    if (!response.ok)
+    if (!response.ok) {
+      const hint =
+        response.status === 401 || response.status === 403
+          ? "The provider rejected the API key."
+          : response.status === 402
+            ? "The OpenRouter account has insufficient credits."
+            : response.status === 404 || response.status === 400
+              ? `Check that the model "${model}" exists and supports this request.`
+              : "Try again later or check the provider configuration.";
       throw new HttpError(
         response.status === 429 ? 429 : 502,
-        `The AI provider returned HTTP ${response.status}. Try again later or check the provider configuration.`,
+        `${provider!.name} returned HTTP ${response.status}. ${hint}`,
       );
+    }
     const data: any = await response.json();
-    const content = config.GEMINI_API_KEY
+    if (!isGemini) {
+      const upstream = openRouterError(data);
+      if (upstream)
+        throw new HttpError(502, `OpenRouter reported an error: ${upstream}`);
+      if (
+        data.choices?.[0]?.finish_reason === "length" &&
+        !openRouterContent(data)
+      )
+        throw new HttpError(
+          502,
+          `The model "${model}" ran out of output tokens before answering. Try a non-reasoning model.`,
+        );
+    }
+    const content = isGemini
       ? data.candidates?.[0]?.content?.parts
           ?.map((p: any) => p.text || "")
           .join("")
-      : data.choices?.[0]?.message?.content;
+      : openRouterContent(data);
     check(
       typeof content === "string" &&
         content.length > 0 &&
@@ -132,12 +167,14 @@ export async function aiAction(userId: string, input: unknown) {
     );
     let output: any = {
       message: content,
-      provider: config.GEMINI_API_KEY ? "Gemini" : "OpenRouter",
+      provider: provider!.name,
+      model:
+        (!isGemini && typeof data.model === "string" && data.model) || model,
     };
     if (p.kind === "generate") {
       let json: any;
       try {
-        json = JSON.parse(content.replace(/^```(?:json)?\s*|```$/g, ""));
+        json = parseJsonObject(content);
       } catch {
         throw new HttpError(
           502,
@@ -145,7 +182,7 @@ export async function aiAction(userId: string, input: unknown) {
         );
       }
       check(
-        Array.isArray(json.cards) && json.cards.length <= p.count,
+        Array.isArray(json?.cards) && json.cards.length <= p.count,
         "The AI returned an invalid card list. No cards were saved.",
         502,
       );

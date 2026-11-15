@@ -945,8 +945,8 @@ export function Settings({ a }: { a: AppActions }) {
               </span>
             </SettingRow>
             <p className="data-warning">
-              A server-side GEMINI_API_KEY or OPENROUTER_API_KEY can be
-              configured in Sites before deployment. Keys never belong in this
+              A server-side GEMINI_API_KEY or OPENROUTER_API_KEY (any
+              OpenRouter model via OPENROUTER_MODEL) can be configured in Sites before deployment. Keys never belong in this
               form. AI requests are limited to 10 per day; provider charges may
               apply. There is no dollar-based spending cap in this version.
             </p>
