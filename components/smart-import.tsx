@@ -68,6 +68,10 @@ export default function SmartImport({
           language: a.data.settings.language,
         });
         setCards(r.cards);
+        if (r.skipped)
+          a.toast(
+            `${r.skipped} AI card${r.skipped === 1 ? " was" : "s were"} skipped because ${r.skipped === 1 ? "it" : "they"} couldn't be verified against your source.`,
+          );
       } else
         setCards(parsed ? parsed.slice(0, count) : draftFromText(text, count));
       setStep(3);
