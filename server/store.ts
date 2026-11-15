@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { engine } from "./engine";
 import { check, HttpError, cardSchema, settingsSchema } from "./validation";
+import { resolveAiProvider, DEFAULT_MODELS } from "./ai-provider";
 import {
   defaults,
   dayIndex,
@@ -279,15 +280,14 @@ export async function bootstrap(user: {
     unlocks,
     stats,
     goals,
-    ai: {
-      available: !!(
-        (env as any).OPENROUTER_API_KEY || (env as any).GEMINI_API_KEY
-      ),
-      provider: (env as any).GEMINI_API_KEY ? "Gemini" : "OpenRouter",
-      model:
-        (env as any).AI_MODEL ||
-        ((env as any).GEMINI_API_KEY ? "gemini-2.5-flash" : "openrouter/auto"),
-    },
+    ai: (() => {
+      const provider = resolveAiProvider(env);
+      return {
+        available: !!provider,
+        provider: provider?.name || "OpenRouter",
+        model: provider?.model || DEFAULT_MODELS.openrouter,
+      };
+    })(),
     engine: "Rust · SM-2 inspired",
   };
 }

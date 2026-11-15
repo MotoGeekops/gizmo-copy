@@ -134,8 +134,11 @@ No API key is required for core study or non-AI Smart Import. To enable the AI T
 
 ```ini
 GEMINI_API_KEY=...       # Used when present
-OPENROUTER_API_KEY=...   # Fallback when Gemini is absent
+OPENROUTER_API_KEY=...   # Used when Gemini is absent, or when AI_PROVIDER=openrouter
+AI_PROVIDER=...          # Optional: gemini | openrouter (forces a provider when both keys are set)
 AI_MODEL=...             # Optional model override (defaults: gemini-2.5-flash / openrouter/auto)
+OPENROUTER_MODEL=...     # Optional OpenRouter slug, e.g. openai/gpt-4o-mini or meta-llama/llama-3.3-70b-instruct:free
+GEMINI_MODEL=...         # Optional Gemini model name
 ```
 
 ## Verification
