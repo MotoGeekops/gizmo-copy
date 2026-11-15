@@ -5,7 +5,6 @@ import {
   Upload,
   Search,
   BookOpen,
-  Layers,
   Star,
   Archive,
   MoreHorizontal,
@@ -29,8 +28,8 @@ import {
   Modal,
   Field,
   Empty,
-  Progress,
   SectionTitle,
+  deckSwatch,
 } from "./ui";
 import { api, request, download } from "../lib/client";
 import { colors, type Deck, type Subject, cardTypes } from "../lib/types";
@@ -300,6 +299,7 @@ export default function Library({
     deck = route.startsWith("deck/")
       ? d.decks.find((x) => x.id === route.split("/")[1])
       : undefined;
+  const deckCards = deck ? d.cards.filter((c) => c.deckId === deck.id) : [];
   const subjectId = route.startsWith("library/") ? route.split("/")[1] : "";
   const openConfirm = (action: any) => {
     setError("");
@@ -398,57 +398,51 @@ export default function Library({
           <button className="back-link" onClick={() => a.go("library")}>
             <ArrowLeft size={15} /> Back to library
           </button>
-          <div className="page-heading">
-            <div>
+          <section className="deck-hero" data-swatch={deckSwatch(deck)}>
+            <div className="deck-hero-text">
               <h1>{deck.title}</h1>
-              <p>
-                {deck.description ||
-                  "Cards, sources, and review progress for this deck."}
-              </p>
+              <p>{deck.count} {deck.count === 1 ? "card" : "cards"} total</p>
+              {deck.description && <p className="deck-hero-description">{deck.description}</p>}
             </div>
-            <div className="heading-actions">
+            <div className="deck-hero-tools">
               <IconButton label="Edit deck" onClick={() => setEdit(deck)}>
                 <Pencil size={18} />
               </IconButton>
-              <IconButton
-                label="Export deck"
-                onClick={() => exportDeck(deck.id)}
-              >
+              <IconButton label="Export deck" onClick={() => exportDeck(deck.id)}>
                 <Download size={18} />
               </IconButton>
-              <Button variant="secondary" onClick={() => a.importDeck(deck.id)}>
-                <Upload size={16} /> Import
-              </Button>
-              <Button disabled={!deck.count || deck.archived} onClick={start}>
-                <Play size={17} /> Study this deck
-              </Button>
+            </div>
+            <BookOpen className="deck-hero-art" size={150} strokeWidth={1.4} aria-hidden="true" />
+          </section>
+          <div className="deck-stat-row">
+            <div className="deck-stat stat-due">
+              <strong>{deck.due}</strong>
+              <span>Due</span>
+            </div>
+            <div className="deck-stat stat-learning">
+              <strong>{deckCards.filter((c) => c.review?.reviews && c.mastery < 80).length}</strong>
+              <span>Learning</span>
+            </div>
+            <div className="deck-stat stat-mastered">
+              <strong>{deckCards.filter((c) => c.mastery >= 80).length}</strong>
+              <span>Mastered</span>
             </div>
           </div>
-          <div className="deck-summary">
-            <span>
-              <Layers size={17} />
-              <b>{deck.count}</b> cards
-            </span>
-            <span>
-              <ClockIcon />
-              <b>{deck.due}</b> due for review
-            </span>
-            <span>
-              <BookOpen size={17} />
-              <b>{deck.mastery}%</b> estimated mastery
-            </span>
-            <div>
-              <Progress value={deck.mastery} />
-            </div>
-          </div>
-          <SectionTitle
-            title="Your flashcards"
-            subtitle="Edit a question, check its source, or add a new card."
-          >
-            <Button onClick={() => a.editCard(undefined, deck.id)}>
+          <div className="deck-cta">
+            <Button className="deck-start" disabled={!deck.count || deck.archived} onClick={start}>
+              <Play size={19} fill="currentColor" /> {deck.due ? "Start review" : "Study this deck"}
+            </Button>
+            <Button variant="secondary" onClick={() => a.importDeck(deck.id)}>
+              <Upload size={16} /> Import cards
+            </Button>
+            <Button variant="secondary" onClick={() => a.editCard(undefined, deck.id)}>
               <Plus size={17} /> Add a card
             </Button>
-          </SectionTitle>
+          </div>
+          <SectionTitle
+            title="Cards in this deck"
+            subtitle="Edit a question, check its source, or remove it."
+          />
           <div className="card-list">
             {d.cards
               .filter((c) => c.deckId === deck.id)
@@ -1007,21 +1001,6 @@ export default function Library({
         </Modal>
       )}
     </>
-  );
-}
-function ClockIcon() {
-  return (
-    <svg
-      width="17"
-      height="17"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" />
-    </svg>
   );
 }
 function XIcon() {

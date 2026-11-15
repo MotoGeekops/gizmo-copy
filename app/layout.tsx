@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./recallforge.css";
+import "./forge-theme.css";
 
 export const viewport: Viewport = {
   width: "device-width",
