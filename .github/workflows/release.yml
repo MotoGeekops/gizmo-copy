@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, without the leading v (e.g. 1.5.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Tag, build wasm & publish release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check version and release notes
+        run: |
+          v="${{ inputs.version }}"
+          grep -q "\"version\": \"$v\"" package.json || { echo "package.json is not at $v"; exit 1; }
+          test -f "docs/releases/v$v.md" || { echo "Missing docs/releases/v$v.md"; exit 1; }
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Build study engine
+        run: |
+          cargo build --locked --release --target wasm32-unknown-unknown -p recallforge-study-core
+          cp target/wasm32-unknown-unknown/release/recallforge_study_core.wasm study_core.wasm
+
+      - name: Create tag and GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v="${{ inputs.version }}"
+          gh release create "v$v" study_core.wasm \
+            --target "$GITHUB_SHA" \
+            --title "RecallForge v$v" \
+            --notes-file "docs/releases/v$v.md"
